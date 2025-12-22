@@ -1,11 +1,13 @@
 body {
   font-family: sans-serif;
   text-align: center;
+  height: 100vh;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: lightgreen;
+  /* background: lightgreen; */
+  background-image: linear-gradient(180deg, #438d43, #006400);
 }
 
 :root {
@@ -21,6 +23,120 @@ body {
   /* 画像を回転させる */
   --piece-rotate: 180deg;
   --piece-elevation: -6px;
+}
+
+
+/* タイトル */
+.title {
+  display: inline-block;
+  margin: 12px 0 10px 0;
+  padding: 6px 16px;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3.2vw, 2.0rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #fff;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+
+  /* テキスト内のグラデーション（白→薄金）で和風の光沢を表現 */
+  /* background: linear-gradient(90deg, #ffffff 0%, #f7f1d0 60%, #d4b86b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 6px 18px rgba(2,6,12,0.6); */
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 10px 0;
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3.2vw, 2.0rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #fff;
+  position: relative;
+  border-radius: 999px;
+  
+  background: linear-gradient(180deg, #0b0b0b 0%, #222 40%, #0f0f0f 100%);
+  box-shadow: 0 10px 30px rgba(2,6,12,0.6), inset 0 6px 14px rgba(255,255,255,0.02);
+  -webkit-font-smoothing: antialiased;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  height: 4px;
+  width: 56px;
+  margin: 8px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(212,184,107,0.95));
+  box-shadow: 0 6px 12px rgba(18,22,20,0.45);
+}
+
+
+/* ゲーム情報 */
+.game-info {
+  width: var(--board-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  padding: 10px 0px;
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 10px rgba(2,6,23,0.6);
+  position: relative;
+}
+
+/* トグルスイッチ */
+.side-toggle {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.side-label {
+  font-size: 12px;
+  color: #eee;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #334155;
+  border-radius: 999px;
+  transition: background .2s ease;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
+}
+.slider::after{
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s ease;
+}
+.switch input:checked + .slider{
+  background: linear-gradient(90deg,#ef4444,#f97316);
+}
+.switch input:checked + .slider::after{
+  transform: translateX(20px);
 }
 
 
@@ -120,7 +236,7 @@ body {
 
 /* セルのスタイル */
 .cell {
-  background: #f0d9b5;
+  background: linear-gradient(45deg, #f0d9b5 0%, #eecc96 100%);
   border: 1px solid #999;
   display: flex;
   align-items: center;
@@ -145,8 +261,10 @@ body {
 .piece-img {
   width: 95%;
   height: 95%;
-  transition: transform .5s ease;
-  transform: rotate(var(--piece-rotate));
+  transform: translateY(0) rotate(var(--piece-rotate));
+  transition: transform .5s ease, filter .28s ease;
+  transform-origin: center center;
+  will-change: transform, filter; /* 軽量化 */
 }
 
 /* 選択時に画像を少し上へ上げ、影を付ける */
@@ -154,70 +272,6 @@ body {
   /* 回転と併用するため、回転変数を組み合わせる */
   transform: translateY(-8%) rotate(var(--piece-rotate));
   filter: drop-shadow(0 var(--piece-elevation) 5px rgba(0,0,0,0.6));
-}
-
-
-/* ゲーム情報 */
-.game-info {
-  width: var(--board-size);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px auto;
-  padding: 10px 0px;
-  background: linear-gradient(90deg, #0f172a, #1e293b);
-  color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 6px 10px rgba(2,6,23,0.6);
-  position: relative;
-}
-
-/* トグルスイッチ */
-.side-toggle {
-  position: absolute;
-  right: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.side-label {
-  font-size: 12px;
-  color: #eee;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-}
-.switch input { display: none; }
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background: #334155;
-  border-radius: 999px;
-  transition: background .2s ease;
-  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
-}
-.slider::after{
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 3px;
-  top: 3px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform .2s ease;
-}
-.switch input:checked + .slider{
-  background: linear-gradient(90deg,#ef4444,#f97316);
-}
-.switch input:checked + .slider::after{
-  transform: translateX(20px);
 }
 
 
