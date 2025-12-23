@@ -61,34 +61,11 @@ export class Board {
     }
 
 
-    // 移動可能なセル取得
-    // getMovableCells(from, to, board) {
-
-    //     // プレイヤーによって「前」の方向を反転させる
-    //     const fromMultiplier = (this.owner === C.PLAYER_TYPE.SELF) ? 1 : -1;
-    //     const dx = to.x - from.x;
-    //     const dy = (to.y - from.y) * fromMultiplier;
-
-    //     for (let [rx, ry] of this.directions) {
-    //         if (this.isRanged) {
-    //             if (isSameDirection(dx, dy, rx, ry)) {
-    //                 // 移動経路に他の駒がないかチェック（障害物判定）
-    //                 return isPathClear(from, to, grid);
-    //             }
-    //         } else {
-    //             // 歩・金・王などの1マス移動（または桂馬）
-    //             if (dx === rx && dy === ry) return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-
     // 駒取得
     getPiece(x, y) {
         return this.board[y] && this.board[y][x];
     }
-
+    
 
     // 移動可能なセルの取得
     getMovableCells(fromX, fromY, movingPiece) {
