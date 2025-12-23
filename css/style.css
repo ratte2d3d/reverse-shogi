@@ -28,51 +28,7 @@ body {
 
 /* タイトル */
 .title {
-  display: inline-block;
-  margin: 12px 0 10px 0;
-  padding: 6px 16px;
-  font-weight: 800;
-  font-size: clamp(1.2rem, 3.2vw, 2.0rem);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: #fff;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
-
-  /* テキスト内のグラデーション（白→薄金）で和風の光沢を表現 */
-  /* background: linear-gradient(90deg, #ffffff 0%, #f7f1d0 60%, #d4b86b 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 6px 18px rgba(2,6,12,0.6); */
-
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin: 12px 0 10px 0;
-  padding: 10px 20px;
-  font-weight: 800;
-  font-size: clamp(1.2rem, 3.2vw, 2.0rem);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: #fff;
-  position: relative;
-  border-radius: 999px;
-  
-  background: linear-gradient(180deg, #0b0b0b 0%, #222 40%, #0f0f0f 100%);
-  box-shadow: 0 10px 30px rgba(2,6,12,0.6), inset 0 6px 14px rgba(255,255,255,0.02);
-  -webkit-font-smoothing: antialiased;
-}
-
-.title::after {
-  content: "";
-  display: block;
-  height: 4px;
-  width: 56px;
-  margin: 8px auto 0;
-  border-radius: 4px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(212,184,107,0.95));
-  box-shadow: 0 6px 12px rgba(18,22,20,0.45);
+  width: calc(var(--board-size) / 2);
 }
 
 
@@ -84,7 +40,7 @@ body {
   justify-content: center;
   margin: 20px auto;
   padding: 10px 0px;
-  background: linear-gradient(90deg, #0f172a, #1e293b);
+  background: #573216;
   color: #fff;
   border-radius: 10px;
   box-shadow: 0 6px 10px rgba(2,6,23,0.6);
@@ -116,10 +72,10 @@ body {
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background: #334155;
+  background: #744d30;
   border-radius: 999px;
   transition: background .2s ease;
-  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2);
+  box-shadow: inset 0 -2px 0 rgba(136, 96, 63, 0.2);
 }
 .slider::after{
   content: "";
@@ -133,7 +89,7 @@ body {
   transition: transform .2s ease;
 }
 .switch input:checked + .slider{
-  background: linear-gradient(90deg,#ef4444,#f97316);
+  background: #c08646;
 }
 .switch input:checked + .slider::after{
   transform: translateX(20px);
@@ -244,7 +200,19 @@ body {
   cursor: pointer;
 }
 .cell:hover {
-  background-color: #f3c273;
+  background: #f3c273;
+}
+/* 移動不可能なセル */
+.cell.immovable {
+  position: relative;
+}
+.cell.immovable::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* 駒のスタイル */

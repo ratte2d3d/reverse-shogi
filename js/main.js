@@ -7,6 +7,7 @@ let myColor = C.PIECE_COLOR.BLACK;
 let turn = myColor === C.PIECE_COLOR.BLACK ? C.PLAYER_TYPE.SELF : C.PLAYER_TYPE.OPPONENT;
 let isReverseBoard = false;
 let selected = null;
+let movableCells = null;
 
 const turnDiv = document.getElementById("turn");
 const boardDiv = document.getElementById("board");
@@ -121,6 +122,12 @@ function render() {
       if (selected && selected.x === x && selected.y === y) {
         cell.classList.add("selected");
       }
+      // 移動可能なセル
+      const movable = movableCells && movableCells.some(([mx, my]) => mx === x && my === y);
+      // 駒を選択中に、移動できない場所を暗くする
+      if (selected && !movable) {
+        cell.classList.add("immovable");
+      }
 
       // 駒表示
       const piece = board.getPiece(x, y);
@@ -152,12 +159,16 @@ function onCellClick(x, y) {
   if (!selected) {
     if (piece && piece.owner === turn) {
       selected = { x, y };
+      movableCells = board.getMovableCells(x, y, piece);
     }
   } else {
     // 移動
-    board.movePiece(selected.x, selected.y, x, y);
+    if (movableCells && movableCells.some(([mx, my]) => mx === x && my === y)) {
+      board.movePiece(selected.x, selected.y, x, y);
+      turn = playerTypeChange(turn);
+    }
     selected = null;
-    turn = playerTypeChange(turn);
+    movableCells = null
   }
 
   render();
@@ -189,10 +200,6 @@ function handleFlip(x, y, piece) {
       ny += dy;
     }
   }
-}
-
-function inBoard(x, y) {
-  return x >= 0 && y >= 0 && x < board.BOARD_SIZE && y < board.BOARD_SIZE;
 }
 
 initGame();
