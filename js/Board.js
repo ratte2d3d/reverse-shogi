@@ -1,5 +1,5 @@
-import { Constants as C } from "./constants.js";
-import { Pieces } from "./pieces.js";
+import { Constants as C } from "./Constants.js";
+import { Pieces } from "./Pieces.js";
 
 
 export class Board {
@@ -14,7 +14,9 @@ export class Board {
     }
 
 
-    // 盤面初期化
+    /**
+     * 盤面初期化
+     */
     initBoard() {
         for (let y = 0; y < this.BOARD_SIZE; y++) {
             this.board[y] = [];
@@ -25,7 +27,9 @@ export class Board {
         this.setInitPieces();
     }
 
-    // 駒の初期配置
+    /**
+     * 駒の初期配置
+     */
     setInitPieces() {
         for (let i = 0; i <= 1; i++) {
             let first_y, second_y, third_y, rook_x, bishop_x, owner;
@@ -62,7 +66,13 @@ export class Board {
     }
 
 
-    // 駒移動
+    /**
+     * 駒移動
+     * @param fromX 動かす駒の場所
+     * @param fromY 動かす駒の場所
+     * @param toX 移動先の場所
+     * @param toY 移動先の場所
+     */
     movePiece(fromX, fromY, toX, toY) {
         const movingPiece = this.getPiece(fromX, fromY);
         const targetPiece = this.getPiece(toX, toY);
@@ -74,11 +84,15 @@ export class Board {
         // 駒の移動
         this.board[toY][toX] = movingPiece;
         this.board[fromY][fromX] = null;
-        // 挟み反転
-        // handleFlip(toX, toY, piece);
     }
 
-    // 駒打ち
+    /**
+     * 駒打ち
+     * @param {string} owner 駒の持ち主
+     * @param {string} type 駒の種類
+     * @param toX 移動先の場所
+     * @param toY 移動先の場所
+     */
     dropPiece(owner, type, toX, toY) {
         const hand = this.hands[owner];
         const idx = hand.findIndex(p => p.type === type);
@@ -89,12 +103,19 @@ export class Board {
     }
 
 
-    // 駒取得
+    /**
+     * 駒取得
+     * @param x 駒の場所
+     * @param y 駒の場所
+     */
     getPiece(x, y) {
         return this.board[y] && this.board[y][x];
     }
 
-    // 持ち駒の種類ごとのカウントを返す
+    /**
+     * 持ち駒の種類ごとのカウントを返す
+     * @param {string} owner 駒の持ち主
+     */
     getHandCounts(owner) {
         const counts = {};
         const hand = this.hands[owner]

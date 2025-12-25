@@ -1,4 +1,4 @@
-import { Constants as C } from "./constants.js";
+import { Constants as C } from "./Constants.js";
 
 export class Pieces {
     constructor(owner, type) {
