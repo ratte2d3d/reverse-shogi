@@ -65,7 +65,7 @@ export class Board {
     getPiece(x, y) {
         return this.board[y] && this.board[y][x];
     }
-    
+
 
     // 移動可能なセルの取得
     getMovableCells(fromX, fromY, movingPiece) {
@@ -136,5 +136,23 @@ export class Board {
 
         // 挟み反転
         // handleFlip(toX, toY, piece);
+    }
+
+    // 盤クラス内に追加してください
+    // 持ち駒を盤面に置く。成功したら true、できなければ false を返す。
+    dropPiece(owner, type, toX, toY) {
+    // 範囲チェック
+    if (!this.inBoard(toX, toY)) return false;
+    // 既に駒があるなら置けない
+    if (this.board[toY][toX]) return false;
+    // 手駒配列から該当 type を探す
+    const hand = this.hands[owner];
+    const idx = hand.findIndex(p => p.type === type);
+    if (idx === -1) return false;
+    // 手駒から取り出す（実体は保持されている piece オブジェクト）
+    const pieceFromHand = hand.splice(idx, 1)[0];
+    // 盤に新しい駒を作成して置く（Pieces コンストラクタを使う）
+    this.board[toY][toX] = new Pieces(owner, type);
+    return true;
     }
 }
