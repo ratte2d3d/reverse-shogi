@@ -1,8 +1,10 @@
 import { Constants as C } from "./constants.js";
 import { Board } from "./board.js";
+import { Logic } from "./logic.js";
 
 
 const board = new Board(9);
+const logic = new Logic(board);
 let myColor = C.PIECE_COLOR.BLACK;
 let turn = myColor === C.PIECE_COLOR.BLACK ? C.PLAYER_TYPE.SELF : C.PLAYER_TYPE.OPPONENT;
 
@@ -123,7 +125,7 @@ function onCellClick(x, y) {
   if (!isSelected()) {
     if (piece && piece.owner === turn) {
       selected = { x, y };
-      placeableCells = board.getMovableCells(x, y, piece);
+      placeableCells = logic.getMovableCells(x, y, piece);
     }
   } else {
     // 配置可能時
