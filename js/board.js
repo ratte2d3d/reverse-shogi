@@ -13,6 +13,7 @@ export class Board {
         this.initBoard();
     }
 
+
     // 盤面初期化
     initBoard() {
         for (let y = 0; y < this.BOARD_SIZE; y++) {
@@ -60,12 +61,6 @@ export class Board {
         }
     }
 
-
-    // 駒取得
-    getPiece(x, y) {
-        return this.board[y] && this.board[y][x];
-    }
-    
 
     // 移動可能なセルの取得
     getMovableCells(fromX, fromY, movingPiece) {
@@ -122,19 +117,41 @@ export class Board {
     movePiece(fromX, fromY, toX, toY) {
         const movingPiece = this.getPiece(fromX, fromY);
         const targetPiece = this.getPiece(toX, toY);
-        if (!movingPiece) return;
-
-        // 取る処理
+        // 相手の駒を取る処理
         if (targetPiece && targetPiece.owner !== movingPiece.owner) {
             targetPiece.owner = movingPiece.owner;
             this.hands[movingPiece.owner].push(targetPiece);
         }
-
         // 駒の移動
         this.board[toY][toX] = movingPiece;
         this.board[fromY][fromX] = null;
-
         // 挟み反転
         // handleFlip(toX, toY, piece);
+    }
+
+    // 駒打ち
+    dropPiece(owner, type, toX, toY) {
+        const hand = this.hands[owner];
+        const idx = hand.findIndex(p => p.type === type);
+        // 手駒から取り出す
+        const pieceFromHand = hand.splice(idx, 1)[0];
+        // 駒を打つ
+        this.board[toY][toX] = pieceFromHand;
+    }
+
+
+    // 駒取得
+    getPiece(x, y) {
+        return this.board[y] && this.board[y][x];
+    }
+
+    // 持ち駒の種類ごとのカウントを返す
+    getHandCounts(owner) {
+        const counts = {};
+        const hand = this.hands[owner]
+        for (const p of hand) {
+            counts[p.type] = (counts[p.type] || 0) + 1;
+        }
+        return counts;
     }
 }

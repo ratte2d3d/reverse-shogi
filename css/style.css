@@ -151,6 +151,7 @@ body {
   align-items: center;
   justify-content: center;
   width: calc(var(--board-size) * (2/3) / 7);
+  cursor: pointer;
 }
 
 /* 個数バッジ */
@@ -203,10 +204,10 @@ body {
   background: #f3c273;
 }
 /* 移動不可能なセル */
-.cell.immovable {
+.cell.unplaceable {
   position: relative;
 }
-.cell.immovable::after {
+.cell.unplaceable::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -214,6 +215,7 @@ body {
   pointer-events: none;
   z-index: 2;
 }
+
 
 /* 駒のスタイル */
 .piece {
@@ -236,7 +238,7 @@ body {
 }
 
 /* 選択時に画像を少し上へ上げ、影を付ける */
-.cell.selected .piece-img {
+.selected .piece-img {
   /* 回転と併用するため、回転変数を組み合わせる */
   transform: translateY(-8%) rotate(var(--piece-rotate));
   filter: drop-shadow(0 var(--piece-elevation) 5px rgba(0,0,0,0.6));
