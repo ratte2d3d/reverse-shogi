@@ -110,9 +110,10 @@ export class GameController {
         if (piece) {
           const p = document.createElement("div");
           p.className = `piece ${piece.owner}`;
-          // テキスト表示の代わりに画像を作成して追加
+          // 画像追加
           const img = document.createElement("img");
-          img.src = `img/${piece.type}_${this.getPlayerColor(piece.owner)}.png`;
+          const promotion = piece.promotion ? "_promotion" : "";
+          img.src = `img/${piece.type}_${this.getPlayerColor(piece.owner)}${promotion}.png`;
           img.className = "piece-img";
           p.appendChild(img);
           cell.appendChild(p);
