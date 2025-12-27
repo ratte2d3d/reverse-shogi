@@ -139,11 +139,11 @@ export class Board {
     }
 
     /**
-     * 駒が必ず成るエリア
+     * 駒の最終段エリア
      * @param {string} owner 駒の持ち主
      * @param {string} type 駒の種類
      */
-    getMustPromotionArea(owner, type) {
+    getDeadRankArea(owner, type) {
         let range = [];
         if (type === C.PIECE_TYPE.PAWN || type === C.PIECE_TYPE.LANCE) range = [0];
         if (type === C.PIECE_TYPE.KNIGHT) range = [0, 1];
@@ -154,5 +154,27 @@ export class Board {
         } else {
             return range.map(r => this.BOARD_SIZE - 1 - r);
         }
+    }
+
+    /**
+     * 歩が存在する列の取得
+     * @param {string} owner 駒の持ち主
+     */
+    getPawnColumns(owner) {
+        const columns = [];
+        for (let y = 0; y < this.BOARD_SIZE; y++) {
+            for (let x = 0; x < this.BOARD_SIZE; x++) {
+                const piece = this.getPiece(x, y);
+                if (
+                    piece && 
+                    piece.owner === owner && 
+                    piece.type === C.PIECE_TYPE.PAWN && 
+                    !piece.promotion
+                ) {
+                    if (!columns.includes(x)) columns.push(x);
+                }                
+            }
+        }
+        return columns;
     }
 }

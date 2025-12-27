@@ -1,4 +1,5 @@
 import { Constants as C } from "./constants/Constants.js";
+import { Utils as U } from "./utils/Utils.js";
 
 
 export class Logic {
@@ -18,11 +19,20 @@ export class Logic {
 
     /**
      * 打つことができるセルの取得
+     * @param owner 持ち主
+     * @param type 駒の種類
      */
-    getPlaceableCells() {
+    getPlaceableCells(owner, type) {
         let placeableCells = [];
+        const deadRankArea = this.board.getDeadRankArea(owner, type);
+        const pawnColumns = this.board.getPawnColumns(owner);
+
         for (let y = 0; y < this.board.BOARD_SIZE; y++) {
+            // 最終段エリアには打てない
+            if (deadRankArea.includes(y)) continue;
             for (let x = 0; x < this.board.BOARD_SIZE; x++) {
+                // 二歩チェック
+                if (type === C.PIECE_TYPE.PAWN && pawnColumns.includes(x)) continue;
                 if (!this.board.getPiece(x, y)) placeableCells.push([x, y]);
             }
         }
@@ -146,7 +156,7 @@ export class Logic {
 
 
     /**
-     * 成駒
+     * 駒が成れるか判定
      * @param fromX 動かす前の場所
      * @param fromY 動かす前の場所
      * @param toX 動かした後の場所
@@ -162,7 +172,7 @@ export class Logic {
             return C.PromotionStatus.CANNOT_PROMOTE;
         }
         // 成る範囲
-        const mustPromotionArea = this.board.getMustPromotionArea(piece.owner, piece.type);
+        const mustPromotionArea = this.board.getDeadRankArea(piece.owner, piece.type);
         const promotionArea = this.board.getPromotionArea(piece.owner);
         // 必須成り判定
         if (mustPromotionArea.includes(toY)) {
@@ -215,5 +225,45 @@ export class Logic {
                 ty += dy;
             }
         });
+    }
+
+
+    /**
+     * 王手判定
+     * @param {string} player 判定するプレイヤー
+     * @return {object|null} 王手情報（王の位置と王手している駒の位置）
+     */
+    isCheck(player) {
+        // 王の位置を取得
+        let kingPos = null;
+        for (let y = 0; y < this.board.BOARD_SIZE; y++) {
+            for (let x = 0; x < this.board.BOARD_SIZE; x++) {
+                const piece = this.board.getPiece(x, y);
+                if (piece && piece.owner === player && piece.type === C.PIECE_TYPE.KING) {
+                    kingPos = { x, y };
+                    break;
+                }
+            }
+            if (kingPos) break;
+        }
+
+        // 相手の駒の移動可能セルに王があるか判定
+        const opponent = U.playerTypeChange(player);
+        for (let y = 0; y < this.board.BOARD_SIZE; y++) {
+            for (let x = 0; x < this.board.BOARD_SIZE; x++) {
+                const piece = this.board.getPiece(x, y);
+                if (piece && piece.owner === opponent) {
+                    const movableCells = this.getMovableCells(x, y, piece);
+                    if (movableCells.some(([mx, my]) => mx === kingPos.x && my === kingPos.y)) {
+                        const checkingPos = { x, y };
+                        return {
+                            king: kingPos, 
+                            checking: checkingPos
+                        };
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

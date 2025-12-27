@@ -266,6 +266,15 @@ body {
   filter: drop-shadow(0 var(--piece-elevation) 5px rgba(0, 0, 0, 0.6));
 }
 
+/* 王手マーク */
+.king-in-check {
+  background-color: #ff0000;
+}
+
+.checking-piece {
+  background-color: #ffff00;
+}
+
 
 /* 確認ダイアログ（モーダル） */
 .modal-overlay {

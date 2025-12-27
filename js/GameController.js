@@ -12,13 +12,15 @@ export class GameController {
     this.turn = this.myColor === C.PIECE_COLOR.BLACK ? C.PLAYER_TYPE.SELF : C.PLAYER_TYPE.OPPONENT;
 
     this.selected = null;        // { x, y }
-    this.selectedHand = null;    // { owner: , type: }
+    this.selectedHand = null;    // { owner, type }
     this.placeableCells = null;
 
     this.turnDiv = document.getElementById("turn");
     this.boardDiv = document.getElementById("board");
     this.opponentHandDiv = document.getElementById("opponent-hand");
     this.selfHandDiv = document.getElementById("self-hand");
+
+    this.checkPos = null;  // { king: {x, y}, checking: {x, y} }
   }
 
 
@@ -101,6 +103,11 @@ export class GameController {
           img.src = `img/${piece.type}_${this.getPlayerColor(piece.owner)}${promotion}.png`;
           img.className = "piece-img";
           p.appendChild(img);
+          // 王手マーク
+          const { king, checking } = this.checkPos || {};
+          if (king && king.x === x && king.y === y) p.classList.add("king-in-check");
+          if (checking && checking.x === x && checking.y === y) p.classList.add("checking-piece");
+
           cell.appendChild(p);
         }
         this.boardDiv.appendChild(cell);
@@ -153,6 +160,8 @@ export class GameController {
         }
         // ターン交代
         this.turn = U.playerTypeChange(this.turn);
+        // 王手判定
+        this.checkPos = this.logic.isCheck(this.turn);
       }
       this.selected = null;
       this.selectedHand = null;
@@ -224,18 +233,15 @@ export class GameController {
     // イベント伝播を止める
     event.stopPropagation();
 
-    const handOwner = owner;
-    const handType = type;
-
     // 既に選択していたら解除
-    if (this.selectedHand && this.selectedHand.owner === handOwner && this.selectedHand.type === handType) {
+    if (this.selectedHand && this.selectedHand.owner === owner && this.selectedHand.type === type) {
       this.selectedHand = null;
       this.placeableCells = null;
     } else {
-      if (handOwner === this.turn) {
+      if (owner === this.turn) {
         this.selected = null;
-        this.selectedHand = { owner: handOwner, type: handType };
-        this.placeableCells = this.logic.getPlaceableCells();
+        this.selectedHand = { owner, type };
+        this.placeableCells = this.logic.getPlaceableCells(owner, type);
       }
     }
 
