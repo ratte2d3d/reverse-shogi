@@ -152,25 +152,27 @@ export class Logic {
      * @param toX 動かした後の場所
      * @param toY 動かした後の場所
      */
-    promotePiece(fromX, fromY, toX, toY) {
+    getPromotionStatus(fromX, fromY, toX, toY) {
         const piece = this.board.getPiece(toX, toY);
+        if (!piece) return C.PromotionStatus.CANNOT_PROMOTE;
+        if (piece.promotion) return C.PromotionStatus.CANNOT_PROMOTE;
+
         // 王、金は成らない
-        if (piece && piece.type !== C.PIECE_TYPE.KING && piece.type !== C.PIECE_TYPE.GOLD) {
-            if (piece.owner === C.PLAYER_TYPE.SELF) {
-                // 0~2
-                if ((0 <= fromY && fromY < 3) || (0 <= toY && toY < 3)) {
-                    piece.promote();
-                }
-            } else {
-                // max_index-2 ~ max_index
-                if (
-                    (this.board.BOARD_SIZE - 3 <= fromY && fromY < this.board.BOARD_SIZE) ||
-                    (this.board.BOARD_SIZE - 3 <= toY && toY < this.board.BOARD_SIZE)
-                ) {
-                    piece.promote();
-                }
-            }
+        if (piece.type === C.PIECE_TYPE.KING || piece.type === C.PIECE_TYPE.GOLD) {
+            return C.PromotionStatus.CANNOT_PROMOTE;
         }
+        // 成る範囲
+        const mustPromotionArea = this.board.getMustPromotionArea(piece.owner, piece.type);
+        const promotionArea = this.board.getPromotionArea(piece.owner);
+        // 必須成り判定
+        if (mustPromotionArea.includes(toY)) {
+            return C.PromotionStatus.MUST_PROMOTE;
+        }
+        // 成れるか判定
+        if (promotionArea.includes(fromY) || promotionArea.includes(toY)) {
+            return C.PromotionStatus.OPTIONAL;
+        }
+        return C.PromotionStatus.CANNOT_PROMOTE;
     }
 
 

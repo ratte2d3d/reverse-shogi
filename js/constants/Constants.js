@@ -47,4 +47,10 @@ export class Constants {
     [this.PIECE_TYPE.LANCE]: true,
     [this.PIECE_TYPE.PAWN]: false,
   };
+
+  static PromotionStatus = {
+    CANNOT_PROMOTE: "cannot_promote",
+    OPTIONAL: "optional",
+    MUST_PROMOTE: "must_promote"
+  };
 }

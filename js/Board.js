@@ -125,4 +125,34 @@ export class Board {
         }
         return counts;
     }
+
+    /**
+     * 駒が成れるエリア
+     * @param {string} owner 駒の持ち主
+     */
+    getPromotionArea(owner) {
+        if (owner === C.PLAYER_TYPE.SELF) {
+            return [0, 1, 2];
+        } else {
+            return [this.BOARD_SIZE - 3, this.BOARD_SIZE - 2, this.BOARD_SIZE - 1];
+        }
+    }
+
+    /**
+     * 駒が必ず成るエリア
+     * @param {string} owner 駒の持ち主
+     * @param {string} type 駒の種類
+     */
+    getMustPromotionArea(owner, type) {
+        let range = [];
+        if (type === C.PIECE_TYPE.PAWN || type === C.PIECE_TYPE.LANCE) range = [0];
+        if (type === C.PIECE_TYPE.KNIGHT) range = [0, 1];
+        if (range.length === 0) return range;
+
+        if (owner === C.PLAYER_TYPE.SELF) {
+            return range;
+        } else {
+            return range.map(r => this.BOARD_SIZE - 1 - r);
+        }
+    }
 }

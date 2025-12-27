@@ -118,7 +118,7 @@ export class GameController {
    * @param x セルの場所
    * @param y セルの場所
    */
-  onCellClick(x, y) {
+  async onCellClick(x, y) {
     const piece = this.board.getPiece(x, y);
 
     // 非選択時
@@ -130,13 +130,28 @@ export class GameController {
     } else {
       // 配置可能時
       if (this.placeableCells && this.placeableCells.some(([mx, my]) => mx === x && my === y)) {
+        // 駒移動
         if (this.selected) {
           this.board.movePiece(this.selected.x, this.selected.y, x, y);
-          this.logic.promotePiece(this.selected.x, this.selected.y, x, y);
+          // 成り判定
+          const promotionStatus = this.logic.getPromotionStatus(this.selected.x, this.selected.y, x, y);
+          let promote = false;
+          // 任意の場合
+          if (promotionStatus === C.PromotionStatus.OPTIONAL) {
+            promote = await U.showConfirmDialog("成りますか？");
+          }
+          // 成り処理
+          if (promotionStatus === C.PromotionStatus.MUST_PROMOTE || promote) {
+            const piece = this.board.getPiece(x, y);
+            piece.promote();
+          }
+          // 駒を挟む処理
+          this.logic.flipPieces(x, y);
         } else {
+          // 駒打ち
           this.board.dropPiece(this.selectedHand.owner, this.selectedHand.type, x, y);
         }
-        this.logic.flipPieces(x, y);
+        // ターン交代
         this.turn = U.playerTypeChange(this.turn);
       }
       this.selected = null;

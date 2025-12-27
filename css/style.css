@@ -267,6 +267,58 @@ body {
 }
 
 
+/* 確認ダイアログ（モーダル） */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1200;
+}
+
+.modal {
+  background: #fff;
+  color: #222;
+  padding: 18px 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  min-width: 260px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.modal-message {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-buttons button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-buttons button.confirm {
+  background: #c08646;
+  color: #fff;
+}
+
+.modal-buttons button.cancel {
+  background: #eee;
+  color: #222;
+}
+
+
 @media (max-width: 960px) {
   :root {
     --board-size: 50vh;
