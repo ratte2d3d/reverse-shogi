@@ -1,4 +1,4 @@
-import { Constants as C } from "./Constants.js";
+import { Constants as C } from "./constants/Constants.js";
 import { Pieces } from "./Pieces.js";
 
 
@@ -78,7 +78,8 @@ export class Board {
         const targetPiece = this.getPiece(toX, toY);
         // 相手の駒を取る処理
         if (targetPiece && targetPiece.owner !== movingPiece.owner) {
-            targetPiece.owner = movingPiece.owner;
+            targetPiece.changeOwner();
+            targetPiece.demote();
             this.hands[movingPiece.owner].push(targetPiece);
         }
         // 駒の移動

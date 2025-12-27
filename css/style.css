@@ -43,7 +43,7 @@ body {
   background: #573216;
   color: #fff;
   border-radius: 10px;
-  box-shadow: 0 6px 10px rgba(2,6,23,0.6);
+  box-shadow: 0 6px 10px rgba(2, 6, 23, 0.6);
   position: relative;
 }
 
@@ -67,7 +67,11 @@ body {
   width: 44px;
   height: 24px;
 }
-.switch input { display: none; }
+
+.switch input {
+  display: none;
+}
+
 .slider {
   position: absolute;
   cursor: pointer;
@@ -77,7 +81,8 @@ body {
   transition: background .2s ease;
   box-shadow: inset 0 -2px 0 rgba(136, 96, 63, 0.2);
 }
-.slider::after{
+
+.slider::after {
   content: "";
   position: absolute;
   width: 18px;
@@ -88,16 +93,19 @@ body {
   border-radius: 50%;
   transition: transform .2s ease;
 }
-.switch input:checked + .slider{
+
+.switch input:checked+.slider {
   background: #c08646;
 }
-.switch input:checked + .slider::after{
+
+.switch input:checked+.slider::after {
   transform: translateX(20px);
 }
 
 
 /* 持ち駒エリア */
-#opponent-hand, #self-hand {
+#opponent-hand,
+#self-hand {
   width: var(--board-size);
   display: flex;
   justify-content: space-between;
@@ -105,10 +113,12 @@ body {
   height: 60px;
   border-radius: 8px;
 }
+
 #opponent-hand {
   flex-direction: row;
   background: linear-gradient(30deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.7));
 }
+
 #self-hand {
   flex-direction: row-reverse;
   background: linear-gradient(210deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3));
@@ -121,25 +131,29 @@ body {
   border-radius: 10px;
   padding: 5px 10px;
 }
+
 #opponent-hand .hand-title {
   background-color: #fff;
   color: #444;
 }
+
 #self-hand .hand-title {
   background-color: #000;
   color: #eee;
 }
 
 /* 持ち駒ラップのスタイル */
-.hand-wrap{
+.hand-wrap {
   display: flex;
   align-items: center;
 }
-#opponent-hand .hand-wrap{
+
+#opponent-hand .hand-wrap {
   flex-direction: row-reverse;
   justify-content: flex-end;
 }
-#self-hand .hand-wrap{
+
+#self-hand .hand-wrap {
   flex-direction: row;
   justify-content: flex-start;
 }
@@ -169,10 +183,12 @@ body {
   font-weight: bold;
   pointer-events: none;
 }
+
 #opponent-hand .hand-count {
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
 }
+
 #self-hand .hand-count {
   background: rgba(255, 255, 255, 0.9);
   color: #000;
@@ -186,7 +202,8 @@ body {
 
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  grid-auto-rows: 1fr; /* 各行の高さを自動で揃える */
+  grid-auto-rows: 1fr;
+  /* 各行の高さを自動で揃える */
   gap: 0px;
   margin: 10px auto;
 }
@@ -200,13 +217,16 @@ body {
   justify-content: center;
   cursor: pointer;
 }
+
 .cell:hover {
   background: #f3c273;
 }
+
 /* 移動不可能なセル */
 .cell.unplaceable {
   position: relative;
 }
+
 .cell.unplaceable::after {
   content: "";
   position: absolute;
@@ -228,35 +248,45 @@ body {
   position: relative;
   z-index: 1;
 }
+
 .piece-img {
   width: 95%;
   height: 95%;
   transform: translateY(0) rotate(var(--piece-rotate));
   transition: transform .5s ease, filter .28s ease;
   transform-origin: center center;
-  will-change: transform, filter; /* 軽量化 */
+  will-change: transform, filter;
+  /* 軽量化 */
 }
 
 /* 選択時に画像を少し上へ上げ、影を付ける */
 .selected .piece-img {
   /* 回転と併用するため、回転変数を組み合わせる */
   transform: translateY(-8%) rotate(var(--piece-rotate));
-  filter: drop-shadow(0 var(--piece-elevation) 5px rgba(0,0,0,0.6));
+  filter: drop-shadow(0 var(--piece-elevation) 5px rgba(0, 0, 0, 0.6));
 }
 
 
 @media (max-width: 960px) {
-  :root { 
+  :root {
     --board-size: 50vh;
   }
 }
 
 @media (max-width: 500px) {
-  :root { 
+  :root {
     --board-size: 95vw;
   }
-  #opponent-hand, #self-hand { height: 45px; }
-  .hand-title { font-size: 14px; }
+
+  #opponent-hand,
+  #self-hand {
+    height: 45px;
+  }
+
+  .hand-title {
+    font-size: 14px;
+  }
+
   .hand-count {
     width: 15px;
     height: 15px;

@@ -1,4 +1,5 @@
-import { Constants as C } from "./Constants.js";
+import { Constants as C } from "./constants/Constants.js";
+import { Utils as U } from "./utils/Utils.js";
 import { Board } from "./Board.js";
 import { Logic } from "./Logic.js";
 
@@ -20,29 +21,13 @@ export class GameController {
     this.selfHandDiv = document.getElementById("self-hand");
   }
 
-  
+
   /**
    * プレイヤーの色取得
    * @param {string} player プレイヤー
    */
   getPlayerColor(player) {
-    return player === C.PLAYER_TYPE.SELF ? this.myColor : this.colorChange(this.myColor);
-  }
-
-  /**
-   * 色変更
-   * @param {string} color 色
-   */
-  colorChange(color) {
-    return color === C.PIECE_COLOR.BLACK ? C.PIECE_COLOR.WHITE : C.PIECE_COLOR.BLACK;
-  }
-
-  /**
-   * プレイヤー変更
-   * @param {string} player プレイヤー
-   */
-  playerTypeChange(player) {
-    return player === C.PLAYER_TYPE.SELF ? C.PLAYER_TYPE.OPPONENT : C.PLAYER_TYPE.SELF;
+    return player === C.PLAYER_TYPE.SELF ? this.myColor : U.colorChange(this.myColor);
   }
 
   /**
@@ -147,11 +132,12 @@ export class GameController {
       if (this.placeableCells && this.placeableCells.some(([mx, my]) => mx === x && my === y)) {
         if (this.selected) {
           this.board.movePiece(this.selected.x, this.selected.y, x, y);
+          this.logic.promotePiece(this.selected.x, this.selected.y, x, y);
         } else {
           this.board.dropPiece(this.selectedHand.owner, this.selectedHand.type, x, y);
         }
         this.logic.flipPieces(x, y);
-        this.turn = this.playerTypeChange(this.turn);
+        this.turn = U.playerTypeChange(this.turn);
       }
       this.selected = null;
       this.selectedHand = null;

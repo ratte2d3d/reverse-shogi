@@ -1,4 +1,4 @@
-import { Constants as C } from "./Constants.js";
+import { Constants as C } from "./constants/Constants.js";
 
 
 export class Logic {
@@ -15,18 +15,18 @@ export class Logic {
         return x >= 0 && y >= 0 && x < this.board.BOARD_SIZE && y < this.board.BOARD_SIZE;
     }
 
-    
+
     /**
      * 打つことができるセルの取得
      */
     getPlaceableCells() {
-      let placeableCells = [];
-      for (let y = 0; y < this.board.BOARD_SIZE; y++) {
-        for (let x = 0; x < this.board.BOARD_SIZE; x++) {
-          if (!this.board.getPiece(x, y)) placeableCells.push([x, y]);
+        let placeableCells = [];
+        for (let y = 0; y < this.board.BOARD_SIZE; y++) {
+            for (let x = 0; x < this.board.BOARD_SIZE; x++) {
+                if (!this.board.getPiece(x, y)) placeableCells.push([x, y]);
+            }
         }
-      }
-      return placeableCells;
+        return placeableCells;
     }
 
 
@@ -39,9 +39,45 @@ export class Logic {
     getMovableCells(fromX, fromY, movingPiece) {
         let movableCells = []
 
+        // 通常状態の移動方向をスキャン
+        // 飛車角は成駒でも通常状態の移動をするためスキャン
+        if (
+            !movingPiece.promotion ||
+            movingPiece.type === C.PIECE_TYPE.ROOK ||
+            movingPiece.type === C.PIECE_TYPE.BISHOP
+        ) {
+            movableCells = this.scanMovableCells(
+                fromX,
+                fromY,
+                movingPiece,
+                movingPiece.directions,
+                movingPiece.isLongRange,
+                movableCells
+            );
+        }
+
+        // // 成駒で追加される移動方向
+        // if (movingPiece.type === C.PIECE_TYPE.ROOK || movingPiece.type === C.PIECE_TYPE.BISHOP) {
+
+        // }
+
+        return movableCells;
+    }
+
+    /**
+     * 指定した方向へ移動可能か判定
+     * @param fromX 動かす駒の場所
+     * @param fromY 動かす駒の場所
+     * @param {Piece} movingPiece 動かす駒
+     * @param direction スキャンする方向
+     * @param {boolean} isLongRange スキャンする距離
+     * @param movableCells 移動可能なセル
+     */
+    scanMovableCells(fromX, fromY, movingPiece, direction, isLongRange, movableCells) {
         // プレイヤーによって「前」の方向を反転させる
         const frontMultiplier = (movingPiece.owner === C.PLAYER_TYPE.SELF) ? 1 : -1;
-        for (let [directionX, directionY] of movingPiece.directions) {
+
+        for (let [directionX, directionY] of direction) {
             // 移動方向
             const dx = directionX;
             const dy = directionY * frontMultiplier;
@@ -52,19 +88,21 @@ export class Logic {
                 const toX = fromX + dx * distance;
                 const toY = fromY + dy * distance;
                 const targetPiece = this.board.getPiece(toX, toY);
-                
+
                 // 移動可能か判定
                 const mv = this.canMove(toX, toY, movingPiece, targetPiece);
                 if (!mv.movable) break;
-                movableCells.push([toX, toY]);
-                
+                // 重複処理
+                if (!movableCells.some(([cx, cy]) => cx === toX && cy === toY)) movableCells.push([toX, toY]);
+
                 // 探索終了
                 if (mv.stop) break;
-                if (!movingPiece.isRanged) break;
+                if (!isLongRange) break;
 
                 distance++;
             }
         }
+
         return movableCells;
     }
 
@@ -82,8 +120,37 @@ export class Logic {
         if (targetPiece && targetPiece.owner === movingPiece.owner) return { movable: false, stop: true };
         // 相手の駒があるか判定
         if (targetPiece && targetPiece.owner !== movingPiece.owner) return { movable: true, stop: true };
-        
+
         return { movable: true, stop: false };
+    }
+
+
+    /**
+     * 成駒
+     * @param fromX 動かす前の場所
+     * @param fromY 動かす前の場所
+     * @param toX 動かした後の場所
+     * @param toY 動かした後の場所
+     */
+    promotePiece(fromX, fromY, toX, toY) {
+        const piece = this.board.getPiece(toX, toY);
+        // 王、金は成らない
+        if (piece && piece.type !== C.PIECE_TYPE.KING && piece.type !== C.PIECE_TYPE.GOLD) {
+            if (piece.owner === C.PLAYER_TYPE.SELF) {
+                // 0~2
+                if ((0 <= fromY && fromY < 3) || (0 <= toY && toY < 3)) {
+                    piece.promote();
+                }
+            } else {
+                // max_index-2 ~ max_index
+                if (
+                    (this.board.BOARD_SIZE - 3 <= fromY && fromY < this.board.BOARD_SIZE) ||
+                    (this.board.BOARD_SIZE - 3 <= toY && toY < this.board.BOARD_SIZE)
+                ) {
+                    piece.promote();
+                }
+            }
+        }
     }
 
 
@@ -111,13 +178,14 @@ export class Logic {
                 if (piece.owner !== basePiece.owner) {
                     // 王は反転しない仕様
                     if (piece.type !== C.PIECE_TYPE.KING) {
-                        cellsToFlip.push({x: tx, y: ty, piece: piece});
+                        cellsToFlip.push({ x: tx, y: ty, piece: piece });
                     }
                 } else {
                     // 自分の駒で挟めた場合、リストにある駒を反転
                     cellsToFlip.forEach(item => {
                         // ここに、二歩チェックを後から実装
-                        item.piece.owner = basePiece.owner;
+                        item.piece.changeOwner();
+                        item.piece.demote();
                     });
                     break;
                 }
