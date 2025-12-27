@@ -39,8 +39,8 @@ export class Logic {
     getMovableCells(fromX, fromY, movingPiece) {
         let movableCells = []
 
-        // 通常状態の移動方向をスキャン
-        // 飛車角は成駒でも通常状態の移動をするためスキャン
+        // 通常時の移動方向をスキャン
+        // 飛車角は成駒でも通常時の移動をするためスキャン
         if (
             !movingPiece.promotion ||
             movingPiece.type === C.PIECE_TYPE.ROOK ||
@@ -56,10 +56,30 @@ export class Logic {
             );
         }
 
-        // // 成駒で追加される移動方向
-        // if (movingPiece.type === C.PIECE_TYPE.ROOK || movingPiece.type === C.PIECE_TYPE.BISHOP) {
-
-        // }
+        // 成駒時の移動方向
+        if (movingPiece.promotion) {
+            // 飛車角で追加される移動方向
+            if (movingPiece.type === C.PIECE_TYPE.ROOK || movingPiece.type === C.PIECE_TYPE.BISHOP) {
+                movableCells = this.scanMovableCells(
+                    fromX,
+                    fromY,
+                    movingPiece,
+                    C.PIECE_DIRECTION[C.PIECE_TYPE.KING],
+                    false,
+                    movableCells
+                );
+            } else {
+                // 飛車角以外の移動方向（金）
+                movableCells = this.scanMovableCells(
+                    fromX,
+                    fromY,
+                    movingPiece,
+                    C.PIECE_DIRECTION[C.PIECE_TYPE.GOLD],
+                    false,
+                    movableCells
+                );
+            }
+        }
 
         return movableCells;
     }
@@ -70,7 +90,7 @@ export class Logic {
      * @param fromY 動かす駒の場所
      * @param {Piece} movingPiece 動かす駒
      * @param direction スキャンする方向
-     * @param {boolean} isLongRange スキャンする距離
+     * @param {boolean} isLongRange 長距離をスキャンするかどうか
      * @param movableCells 移動可能なセル
      */
     scanMovableCells(fromX, fromY, movingPiece, direction, isLongRange, movableCells) {
